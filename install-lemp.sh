@@ -5,7 +5,7 @@ sudo apt-get update
 sudo apt-get install nginx php8.1 php8.1-fpm php8.1-mysql mysql-server -y
 
 sudo mysql -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${PASSWORD}';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'abc123';
 FLUSH PRIVILEGES;
 EOF
 
