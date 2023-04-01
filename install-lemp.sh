@@ -1,25 +1,23 @@
 #!/bin/bash
 
-# Update and install Nginx, PHP 8.1, PHP-FPM, MySQL
+read -s -p "Enter root password for MySQL: " MYSQL_ROOT_PASSWORD
+
+# Install LEMP stack
 sudo apt-get update
 sudo apt-get install nginx php8.1 php8.1-fpm php8.1-mysql mysql-server -y
 
-sudo mysql -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'abc123';
+# disable strict mode
+sudo sed -i 's/\[mysqld\]/&\nsql_mode=""\n/' /etc/mysql/mysql.conf.d/mysqld.cnf
+
+sudo systemctl restart mysql
+
+# Set root password for MySQL
+sudo mysql -u root << EOF
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
 
-sudo mysql_secure_installation <<EOF
+echo 'Use the same root password you have been prompted earlier'
+echo 'Running MySQL installation..'
 
-n
-y
-y
-y
-y
-EOF
-
-sudo sed -i '/\[mysqld\]/a sql_mode=""' /etc/mysql/mysql.conf.d/mysqld.cnf
-
-sudo systemctl restart nginx
-sudo systemctl restart php8.1-fpm
-sudo systemctl restart mysql
+sudo mysql_secure_installation
